@@ -1,9 +1,10 @@
 package co.edu.elpoli.ces3.biblioteca_ces3.model;
 
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public abstract class Connection {
+public abstract class Konnection {
 
     // Librería de MySQL
     private String driver = "com.mysql.jdbc.Driver";
@@ -26,11 +27,11 @@ public abstract class Connection {
     // Clave de usuario
     public String password = "";
 
-    public Connection(){
+    public Konnection(){
 
     }
 
-    public java.sql.Connection getConexion(){
+    public Connection getConexion(){
         try {
             Class.forName(driver);
             return DriverManager.getConnection(url, username, password);
