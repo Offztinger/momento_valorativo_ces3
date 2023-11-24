@@ -23,26 +23,37 @@ public class BookServlet extends MyServlet{
 
     private Gson gson;
 
-    private ArrayList<DtoBook> libros;
+    private ArrayList<DtoBook> books;
 
     CtrBook ctr = new CtrBook();
 
     public void init() {
         gsonBuilder = new GsonBuilder();
         gson = gsonBuilder.create();
-        libros = new ArrayList<>();
+        books = new ArrayList<>();
 
-        DtoBook libro1 = new DtoBook();
-        //libro1.settitulo("Hamlet");
-        //libro1.setautor("William Shakespeare");
-
-        libros.add(libro1);
-
-        for (int i = 0; i < libros.size(); i++)
+        for (int i = 0; i < books.size(); i++)
         {
-            System.out.println(libros.get(i));
+            System.out.println(books.get(i));
         }
         message = "Hi Lector";
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        ServletOutputStream out = resp.getOutputStream();
+        resp.setContentType("application/json");
+        String bookIdParam = req.getParameter("id");
+
+        if (bookIdParam != null && !bookIdParam.isEmpty()) {
+            int bookId = Integer.parseInt(bookIdParam);
+            DtoBook book = ctr.getBookById(bookId);
+            out.print(gson.toJson(book));
+        } else {
+            ArrayList<DtoBook> books = ctr.getAllBooks();
+            out.print(gson.toJson(books));
+        }
+        out.flush();
     }
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -64,24 +75,6 @@ public class BookServlet extends MyServlet{
 
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        ServletOutputStream out = resp.getOutputStream();
-        resp.setContentType("application/json");
-        String libroIdParam = req.getParameter("id");
-
-        if (libroIdParam != null && !libroIdParam.isEmpty()) {
-            int libroId = Integer.parseInt(libroIdParam);
-            DtoBook libro = ctr.getBookById(libroId);
-            out.print(gson.toJson(libro));
-        } else {
-            ArrayList<DtoBook> libros = ctr.getAllBooks();
-            out.print(gson.toJson(libros));
-        }
-
-        out.flush();
-    }
-
-    @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         ServletOutputStream out = resp.getOutputStream();
         resp.setContentType("application/json");
@@ -94,14 +87,14 @@ public class BookServlet extends MyServlet{
         }
 
         JsonObject body = gson.fromJson(stringBuilder.toString(), JsonObject.class);
-        int libroId = body.get("id").getAsInt();
+        int bookId = body.get("bookId").getAsInt();
 
         DtoBook updatedBook = new DtoBook(
                 body.get("titulo").getAsString(),
                 body.get("autor").getAsString()
         );
 
-        DtoBook result = ctr.updateBook(libroId, updatedBook);
+        DtoBook result = ctr.updateBook(bookId, updatedBook);
 
         out.print(gson.toJson(result));
         out.flush();
@@ -112,9 +105,9 @@ public class BookServlet extends MyServlet{
         ServletOutputStream out = resp.getOutputStream();
         resp.setContentType("application/json");
 
-        int libroId = Integer.parseInt(req.getParameter("id"));
+        int bookId = Integer.parseInt(req.getParameter("bookId"));
 
-        ctr.deleteBook(libroId);
+        ctr.deleteBook(bookId);
 
         out.print(gson.toJson("Book eliminado"));
         out.flush();

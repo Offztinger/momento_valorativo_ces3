@@ -61,7 +61,7 @@ public class Book extends Konnection implements CRUD{
     public Book create(DtoBook student) throws SQLException {
         Connection cnn = this.getConexion();
         if(cnn != null) {
-            String sql = "INSERT INTO user(author, bookname) VALUES('"+student.getAuthor()+"', '"+student.getBookname()+"')";
+            String sql = "INSERT INTO libros(author, bookname) VALUES('"+student.getAuthor()+"', '"+student.getBookname()+"')";
             this.author = student.getAuthor();
             this.bookname = student.getBookname();
             try {
@@ -86,7 +86,7 @@ public class Book extends Konnection implements CRUD{
         ArrayList<Book> books = new ArrayList<>();
 
         if (cnn != null) {
-            String sql = "SELECT id,author,bookname FROM user";
+            String sql = "SELECT id,author,bookname FROM libros";
             try {
                 PreparedStatement stmt = cnn.prepareStatement(sql);
                 ResultSet rs = stmt.executeQuery();
@@ -121,7 +121,7 @@ public class Book extends Konnection implements CRUD{
         Connection cnn = getConexion();
 
         if (cnn != null) {
-            String sql = "SELECT id,author,bookname FROM user WHERE id = ?";
+            String sql = "SELECT id,author,bookname FROM libros WHERE id = ?";
             try (PreparedStatement stmt = cnn.prepareStatement(sql)) {
                 stmt.setInt(1, studentId);
                 try (ResultSet rs = stmt.executeQuery()) {
@@ -148,10 +148,10 @@ public class Book extends Konnection implements CRUD{
         Connection cnn = getConexion();
 
         if (cnn != null) {
-            String sql = "UPDATE user SET author = ?, bookname = ? WHERE id = ?";
+            String sql = "UPDATE libros SET author = ?, bookname = ? WHERE id = ?";
             try (PreparedStatement stmt = cnn.prepareStatement(sql)) {
-                stmt.setString(1, book.getAuthor());
-                stmt.setString(2, book.getBookname());
+                stmt.setString(1, book.getBookname());
+                stmt.setString(2, book.getAuthor());
                 stmt.setInt(3, book.getId());
                 stmt.executeUpdate();
             } finally {
@@ -168,7 +168,7 @@ public class Book extends Konnection implements CRUD{
         Connection cnn = getConexion();
 
         if (cnn != null) {
-            String sql = "DELETE FROM user WHERE id = ?";
+            String sql = "DELETE FROM libros WHERE id = ?";
             try (PreparedStatement stmt = cnn.prepareStatement(sql)) {
                 stmt.setInt(1, studentId);
                 stmt.executeUpdate();
